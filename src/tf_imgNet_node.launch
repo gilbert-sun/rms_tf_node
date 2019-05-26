@@ -1,4 +1,4 @@
 <launch>
-      <node name="rms_tf_node" pkg="rms_tf_node_package" type="img_recognization.py" output="screen"/>
-      <!--<remap from="CVsub1" to="/usb_cam/image_raw"/>-->
+      <node name="rms_tf_node" pkg="rms_tf_node" type="img_recognization.py" output="screen"/>
+      <!--<remap from="image" to="/logitech_c922/image_raw"/>-->
 </launch>
