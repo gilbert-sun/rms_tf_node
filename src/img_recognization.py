@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import rospy
 from sensor_msgs.msg import Image
 from std_msgs.msg import String,Int8
@@ -7,19 +6,16 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-#monitor = ''
-
 import diagnostic_msgs.msg
 from enum import Enum
 from rostopic import ROSTopicHz
 import random
+#from node_function_monitor.msg import BoundingBox
 
-from node_function_monitor.msg import BoundingBox
 
 #from node_monitor import topic_diagnostics,node_result,DataInfo,node_monitor
-
-# cp from https://github.com/tensorflow/models/tutorials/image/imagenet/classify_image.py
 from node_function_monitor.node_monitor import node_monitor
+# cp from https://github.com/tensorflow/models/tutorials/image/imagenet/classify_image.py
 
 from classify_image import tf_model_download
 
@@ -40,67 +36,10 @@ def data_callback(data):
 		msg_data = DataInfo.msg_wrong.value
 	content = data.data
 
-def topic_check_callback(msg, arg):
-	global camera_is_work
-	monitor = arg
-
-	if msg.data == 1:
-		#send result/status
-		camera_is_work = True
-		print("---------111 camera_is_work--------")
-
-	else:
-		#send status and do some handling
-		camera_is_work = False
-		print("---------000 camera_is_work--------")
-
-def topic_check_callback2(msg, arg):
-	monitor = arg
-
-	if msg.data == 1:
-		# node status
-		data2 = {}
-		data2['Status'] = 'Normal'
-		monitor.node_info(data2, 'Status', 'Node is fine.', 0)
-		print("---------456--------",data2.Status)
-	else:
-		# node status
-		data2 = {}
-		data2['Status'] = 'Topic is not active'
-		monitor.node_info(data2, 'Status', 'Topic is not active.', 2)
-		print("---------789--------", data2.Status)
-
-
-def status_result(nodename, pub, data):
-	# prepare the diagnostic array
-	diagnosticArray = diagnostic_msgs.msg.DiagnosticArray()
-	diagnosticArray.header.stamp = rospy.get_rostime()
-
-	# prepare diagnostics message
-	# determine level, node name, object recognized and probability
-	statusMsg = diagnostic_msgs.msg.DiagnosticStatus()
-	statusMsg.name = nodename + " -> --Status--"
-	statusMsg.message = 'Detected ' + data.Class
-	statusMsg.level = 0
-	statusMsg.values.append(
-		diagnostic_msgs.msg.KeyValue("Node name", nodename)
-	)
-	statusMsg.values.append(
-		diagnostic_msgs.msg.KeyValue("Status:", str(data.Class))
-	)
-	statusMsg.values.append(
-		diagnostic_msgs.msg.KeyValue("Val:", str(data.probability))
-	)
-
-	# append message to diagnostic array
-	diagnosticArray.status.append(statusMsg)
-
-	# publish array
-	pub.publish(diagnosticArray)
 
 
 class RosTensorFlow():
-#	global monitor
+	global monitor
 	def __init__(self):
 		self._session = tf.Session()
 
@@ -124,6 +63,9 @@ class RosTensorFlow():
 
 		self.use_top_k = rospy.get_param('~use_top_k', 5)
 
+		self.human_string = ''
+
+		self.score = 0
 
 
 
@@ -141,8 +83,14 @@ class RosTensorFlow():
 
 #		cv2.waitKey(1)
 
-		#rospy.sleep(0.1)
-		# Creates graph from saved GraphDef.
+		cv2.putText(image_data3, self.human_string +": "+ str(int(self.score*10000))+"%", (10, 30), 0, 1, (0, 8, 255), 2)
+
+		msg = self.bridge.cv2_to_imgmsg(image_data3, "bgr8")
+
+		self._pub1.publish(msg)
+
+		rospy.sleep(0.9)
+
 		softmax_tensor = self._session.graph.get_tensor_by_name('softmax:0')
 
 		predictions = self._session.run(
@@ -157,26 +105,25 @@ class RosTensorFlow():
 
 
 		for node_id in top_k:
-			human_string = node_lookup.id_to_string(node_id)
-			score = predictions[node_id]
-			if score > self.score_threshold:
-				rospy.loginfo('%s (score = %.5f)' % (human_string, score))
-				self._pub.publish(human_string)
+			self.human_string = node_lookup.id_to_string(node_id)
+			self.score = predictions[node_id]
+
+			if self.score > self.score_threshold:
+
+				rospy.logdebug('%s (score = %.5f)' % (self.human_string, self.score))
+
+				self._pub.publish(self.human_string)
 
 				#topic_diag_main("ros_tf_node_imgNet", "", human_string, (float(score)) * 100)
 				data={}
-				data['class'] = human_string
-				data['probablity'] = (float(score)) * 100
-				# send a result to be viewed on the console; in this case, data
-				# node_result(node_name, diagnostics_pub, diagnostics_data)
-				self.monitor.node_info(data, '--Result--', 'Detection result received.', 0)
-				data2 = BoundingBox()
-				data2.Class = "Status"  # object[r]
-				data2.probability = 1
-				pub2 = rospy.Publisher('diagnostics1', diagnostic_msgs.msg.DiagnosticArray, queue_size=10)
-				status_result(self.node_name, pub2, data2)
-				#_pub2 = rospy.Publisher('diagnostics1', diagnostic_msgs.msg.DiagnosticArray, queue_size=10)
-				# self.monitor1.node_info(data2, '--Status--', 'Object Recgnization Stauts', 1)
+				data['class'] = self.human_string
+				data['probablity'] = (float(self.score)) * 100
+				self.monitor.node_info(data, 'Result', 'Detection result received.', 0)
+
+				data3={}
+				data3['Status'] = 1
+				self.monitor.node_info(data3, 'Status', 'Detection status received.', 0)
+
 
 	def main(self):
 		rospy.spin()
