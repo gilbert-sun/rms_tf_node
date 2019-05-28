@@ -100,7 +100,7 @@ $ source /rms_root/catkin_ws/devel/setup.bash
 $ roscore
 $ roslaunch usb_cam usb_cam-test.launch
 $ rosrun rms_tf_node img_recognization.py image:=/usb_cam/image_raw
-$ roslaunch rms_tf_node rms_tf_node.launch
+$ roslaunch rms_tf_node tf_imgNet_node.launch
 ```
 ---
 
