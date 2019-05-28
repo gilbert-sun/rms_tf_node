@@ -58,14 +58,14 @@ $ pip install --upgrade pip
 $ pip install --upgrade imutils
 $ pip install --upgrade pytz
 $ pip install --upgrade https://github.com/eweill/Tensorflow-Jetson-TX2/releases/download/v1.4.1/tensorflow-1.4.1-cp27-cp27mu-linux_aarch64.whl
-$ 或是pip install --upgrade tensorflow-1.4.1-cp27-cp27mu-linux_aarch64.whl
+$ or pip install --upgrade tensorflow-1.4.1-cp27-cp27mu-linux_aarch64.whl
 $ deactivate
 ```
 
 img_recognization.py
 --------------------
-* subscribe: /image  (sensor_msgs/Image)
-* publish:   /Tf_image  (sensor_msgs/Image)
+* subscribe: /image  or /logitech_c922/image_raw (sensor_msgs/Image)
+* publish:   /Imgnet_Tf  (sensor_msgs/Image)
 * publish1:  /result (std_msgs/String)
 
 
@@ -80,10 +80,10 @@ Tensorflow 1.4.1
 *git clone
 ```
 $ cd /root/catkin_ws/ or cd /rms_root/gitlab_proj
-$ git clone https://e300-gitlab.itriicle.tw/RMS/ROS/ros_emotion_detect.git
-$ cd ros_emotion_detect
-$ git checkout itri-devel
-$ ln -s /rms_root/gitlab_proj/ros_emotion_detect /rms_root/catkin_ws/src
+$ git clone https://github.com/gilbert-sun/rms_tf_node.git
+$ cd ros_tf_node
+$ git checkout itri-devel (optional , default is no need)
+$ ln -s /rms_root/gitlab_proj/ros_tf_node /rms_root/catkin_ws/src (optional , default is no need)
 ```
 * build package
 ```
