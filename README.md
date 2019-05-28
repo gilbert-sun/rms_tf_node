@@ -117,6 +117,59 @@ python img_recognization.py image:=image_raw
 (Class name,%百分比 ) == (Keyboard, 0.8253038)
 ```
 
+### Install `ros_emotion_detect`
+
+* install required ROS package
+
+N/A
+
+* install Virtualenv for Python 2.7
+
+```shell
+sudo apt-get install --no-install-recommends python-pip python-dev python-virtualenv virtualenv
+virtualenv --system-site-packages /rms_root/tensorflow_py27
+```
+
+* install tensorflow-gpu for Python 2.7
+
+```shell
+source /rms_root/tensorflow_py27/bin/activate
+pip install --upgrade pip
+pip install --upgrade imutils
+pip install --upgrade pytz
+pip install --upgrade https://github.com/eweill/Tensorflow-Jetson-TX2/releases/download/v1.4.1/tensorflow-1.4.1-cp27-cp27mu-linux_aarch64.whl
+
+deactivate
+```
+
+* clone project from GitLab
+
+```shell
+cd /rms_root/gitlab_proj
+git clone https://e300-gitlab.itriicle.tw/RMS/ROS/ros_emotion_detect.git
+cd ros_emotion_detect
+git checkout itri-devel
+ln -s /rms_root/gitlab_proj/ros_emotion_detect /rms_root/catkin_ws/src
+```
+
+* build package
+
+```shell
+source /opt/ros/kinetic/setup.bash
+cd /rms_root/catkin_ws
+catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DCATKIN_WHITELIST_PACKAGES="ros_emotion_detect"
+```
+
+* test
+
+```shell
+source /rms_root/catkin_ws/devel/setup.bash
+roslaunch ros_emotion_detect ros_emotion_detect_script.launch
+```
+
+---
+
+
 
 # Demo
 
