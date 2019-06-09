@@ -133,4 +133,4 @@ python img_recognization.py image:=image_raw
 # Demo1
 ![Total Ros Structure]( ./src/pic/p2.png)
 # Demo2
-![Mnist Tensorflow ROS](../src/pic/2.png)
+![Mnist Tensorflow ROS]( ./src/pic/2.png)
