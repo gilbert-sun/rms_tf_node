@@ -37,7 +37,7 @@ You can see ros-node published predicted numbers. Look at this.
 Right picture is 9-image from camera.  
 Left number is published predicted number.  
 
-![Mnist Tensorflow ROS](../src/pic/2.png)
+![Mnist Tensorflow ROS](../src/pic/p2.png)
 
 # Reference
 * Deep MNIST for Experts (https://www.tensorflow.org/versions/r0.11/tutorials/mnist/pros/index.html)  
