@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<arg name="node_name" default="virtualenv_activate"/>
+ 	<arg name="launch_prefix" default=""/>
+
+	  <node pkg="rms_tf_node" type="virtualenv_activate.sh" name="$(arg node_name)" args="" respawn="false" respawn_delay="30" required="false" output="log" launch-prefix="$(arg launch_prefix)"/>
+
+
+</launch>
