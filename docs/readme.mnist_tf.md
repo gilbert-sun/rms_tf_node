@@ -1,4 +1,4 @@
-# Mnist for Tensorflow at ROS
+# Mnist for Tensorflow at TX2 with ROS  
 Making a ros-node to predict numbers from camera image.  
 According to Tensorflow tutorial Deep MNIST model(https://www.tensorflow.org/versions/r0.11/tutorials/mnist/pros/index.html)
 
@@ -11,10 +11,11 @@ Before you use this, you must install some programs.
 
 `$ sudo apt-get install ros-indigo-cv-bridge ros-indigo-cv-camera`
 
-# tensorflow_in_ros_mnist.py
+# rms_tf_mnist.py
 This is main file. This make the ros-node.
 
 * publish: /result (std_msgs/Int16)
+* publish: /result (std_msgs/Imgnet_Tf)
 * subscribe: /image (sensor_msgs/Image)
 
 # model.ckpt,model.ckpt.meta
