@@ -123,11 +123,11 @@ class RosTensorFlow():
         # topic_diag_main("ros_tf_node_imgNet", "", human_string, (float(score)) * 100)
         data = {}
         data['class'] = answer
-        self.monitor.node_info(data, 'Result', 'Detection result received.', 0)
+        #self.monitor.node_info(data, 'Result', 'Detection result received.', 0)
 
         data3 = {}
         data3['Status'] = 1
-        self.monitor.node_info(data3, 'Status', 'Detection status received.', 0)
+        #self.monitor.node_info(data3, 'Status', 'Detection status received.', 0)
 
         # cv2.imshow("imgNet_tf", cv_image)
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-      <node name="rms_tf_mnist" pkg="rms_tf_mnist_package" type="rms_tf_mnist.py" output="screen"/>
-      <!--<remap from="CVsub1" to="/usb_cam/image_raw"/>-->
+      <node name="rms_tf_mnist" pkg="rms_tf_node" type="rms_tf_mnist.py" output="screen"/>
+      <remap from="image" to="/orbbec_astra/rgb/image_raw"/>
 </launch>
