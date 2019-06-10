@@ -96,9 +96,9 @@ class RosTensorFlow():
         init_op = tf.global_variables_initializer()
         self._session.run(init_op)
 
-        self._saver.restore(self._session, "model/model.ckpt")
+        self._saver.restore(self._session,'/rms_root/catkin_ws/src/rms_tf_node/src/model/model.ckpt')
 
-        self._sub = rospy.Subscriber('image', Image, self.callback, queue_size=1)
+        self._sub = rospy.Subscriber('/orbbec_astra/rgb/image_raw', Image, self.callback, queue_size=1)
         self._pub = rospy.Publisher('result', Int16, queue_size=1)
 
         self._pub1 = rospy.Publisher('Imgnet_Tf', Image, queue_size=1)
