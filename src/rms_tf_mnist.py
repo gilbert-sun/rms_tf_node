@@ -17,14 +17,28 @@ from cv_bridge import CvBridge
 import cv2
 import numpy as np
 import tensorflow as tf
-
+import json
 import diagnostic_msgs.msg
 from enum import Enum
 from rostopic import ROSTopicHz
 import random
 import diagnostic_msgs.msg
 
-from node_function_monitor.node_monitor import node_monitor
+#from node_function_monitor.node_monitor import node_monitor
+
+
+from rms_telemetry.telemetry import telemetry
+from rms_telemetry.constants import MsgLevel, MsgType
+
+# global variables
+TELEMETRY_CODE_NODE_STARTED = '100'
+TELEMETRY_CODE_NODE_INITIALIZED = '101'
+TELEMETRY_CODE_NODE_SHUTDOWN = '102'
+TELEMETRY_CODE_NODE_STATUS = '103'
+TELEMETRY_CODE_PROCESS_RESULT = '104'
+
+TELEMETRY_CODE_ERROR_CLIENT_EXCEPTION = '400'
+TELEMETRY_CODE_ERROR_SERVER_EXCEPTION = '500'
 
 
 def weight_variable(shape):
@@ -82,7 +96,9 @@ class RosTensorFlow():
 
         rospy.init_node(self.node_name, anonymous=True)
 
-        self.monitor = node_monitor(self.node_name)
+        self.monitor =  telemetry(self.node_name) #node_monitor(self.node_name)
+
+        self.monitor.node_info(MsgType.event.value, TELEMETRY_CODE_NODE_STARTED, MsgLevel.INFO.value)
 
         self._cv_bridge = CvBridge()
 
@@ -98,7 +114,7 @@ class RosTensorFlow():
 
         self._saver.restore(self._session,'/rms_root/catkin_ws/src/rms_tf_node/src/model/model.ckpt')
 
-        self._sub = rospy.Subscriber('/orbbec_astra/rgb/image_raw', Image, self.callback, queue_size=1)
+        self._sub = rospy.Subscriber('/usb_cam/image_raw', Image, self.callback, queue_size=1)
         self._pub = rospy.Publisher('result', Int16, queue_size=1)
 
         self._pub1 = rospy.Publisher('Imgnet_Tf', Image, queue_size=1)
@@ -122,18 +138,20 @@ class RosTensorFlow():
 
         # topic_diag_main("ros_tf_node_imgNet", "", human_string, (float(score)) * 100)
         data = {}
-        data['class'] = answer
+        data['class'] = 1
+
         #self.monitor.node_info(data, 'Result', 'Detection result received.', 0)
+        self.monitor.node_info(MsgType.status.value, TELEMETRY_CODE_NODE_STATUS, MsgLevel.INFO.value,  data )
 
         data3 = {}
         data3['Status'] = 1
         #self.monitor.node_info(data3, 'Status', 'Detection status received.', 0)
 
-        # cv2.imshow("imgNet_tf", cv_image)
+        #cv2.imshow("imgNet_tf", cv_image)
 
-        # cv2.waitKey(1)
+        #cv2.waitKey(1)
 
-        rospy.sleep(1)
+        rospy.sleep(10)
 
     def main(self):
         rospy.spin()
